@@ -5,13 +5,15 @@ export interface User extends Document{
     age: number,
     height: number,
     weight: number,
-    gender: string,
+    gender: 'Male' | 'Female' | 'Other',
     diet: {
         breakfast: string[],
         lunch: string[],
         dinner: string[]
     },
-    goal: string
+    goal: string,
+    createdAt?: Date;
+    updatedAt?: Date; 
 }
 
 const userSchema: Schema<User> = new Schema({
@@ -19,14 +21,15 @@ const userSchema: Schema<User> = new Schema({
     age: {type: Number, required: true},
     height: {type: Number, required: true},
     weight: {type: Number, required: true},
-    gender: {type: String, required: true},
+    gender: {type: String, enum: ['Male', 'Female', 'Other'], required: true},
     diet: {
         breakfast: [String],
         lunch: [String],
         dinner: [String]
     },
-    goal: {type: String}
-})
+    goal: {type: String},
+    
+}, {timestamps: true})
 
 const userModel = (mongoose.models.User) || (mongoose.model<User>("User", userSchema));
 
