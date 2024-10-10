@@ -7,7 +7,6 @@ type connectionObject = {
 
 const connection: connectionObject = {}
 
-console.log("Connection object:", connection)
 
 async function dbConnect(): Promise<void>{
     // if database is already connected then do not try to connect again. It will create choking
