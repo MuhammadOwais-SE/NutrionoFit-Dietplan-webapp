@@ -1,221 +1,293 @@
-  "use client"
-  import React, { useState } from 'react';
+"use client";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Label } from "@/components/ui/label";
+import TypedHTMLContent from "./TypedHTMLContent";
 
-  interface UserData {
-    name: string;
-    age: string;
-    height: string;
-    weight: string;
-    gender: string;
-    diet: {
-      breakfast: string[];
-      lunch: string[];
-      dinner: string[];
-    };
-    goal: string;
-  }
-
-  interface DietSuggestion {
+interface UserData {
+  name: string;
+  age: string;
+  height: string;
+  weight: string;
+  gender: string;
+  diet: {
     breakfast: string[];
     lunch: string[];
     dinner: string[];
-    snacks: string[];
-    tips: string[];
-  }
+  };
+  goal: string;
+}
 
-  export default function Home() {
-    const [userData, setUserData] = useState<UserData>({
-      name: '',
-      age: '',
-      height: '',
-      weight: '',
-      gender: '',
-      diet: {
-        breakfast: [''],
-        lunch: [''],
-        dinner: ['']
-      },
-      goal: ''
-    });
-    const [dietSuggestion, setDietSuggestion] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+export default function Home() {
+  const [userData, setUserData] = useState<UserData>({
+    name: "",
+    age: "",
+    height: "",
+    weight: "",
+    gender: "",
+    diet: {
+      breakfast: [""],
+      lunch: [""],
+      dinner: [""],
+    },
+    goal: "",
+  });
+  
+  const [dietSuggestion, setDietSuggestion] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      setIsLoading(true);
-      setError(null);
-      try {
-        const res = await fetch('/api/user', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(userData),
-        });
-        
-        const data = await res.json();
-        console.log(data); // Check if the structure is correct
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
 
-      
-        if (res.ok) {
-          setDietSuggestion(data.dietSuggestion);
-        } else {
-          throw new Error(data.message || 'An error occurred');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unexpected error occurred');
-      } finally {
-        setIsLoading(false);
+      const data = await res.json();
+      console.log(data);
+
+      if (res.ok) {
+        setDietSuggestion(data.dietSuggestion);
+      } else {
+        throw new Error(data.message || "An error occurred");
       }
-    };
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "An unexpected error occurred"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      const { name, value } = e.target;
-      setUserData(prevState => ({
-        ...prevState,
-        [name]: value
-      }));
-    };
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setUserData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
-    const handleDietChange = (meal: keyof UserData['diet'], value: string) => {
-      setUserData(prevState => ({
-        ...prevState,
-        diet: {
-          ...prevState.diet,
-          [meal]: value.split(',').map(item => item.trim())
-        }
-      }));
-    };
+  const handleDietChange = (meal: keyof UserData["diet"], value: string) => {
+    setUserData((prevState) => ({
+      ...prevState,
+      diet: {
+        ...prevState.diet,
+        [meal]: value.split(",").map((item) => item.trim()),
+      },
+    }));
+  };
 
-    const inputStyle = {
-      padding: '8px',
-      borderRadius: '4px',
-      border: '1px solid #ccc',
-      width: '100%'
-    };
-
-    const buttonStyle = {
-      padding: '10px',
-      backgroundColor: '#007bff',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer'
-    };
-
-    return (
-      <div className="container mx-auto p-4">
-        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <h1 className="text-2xl font-bold mb-4">Diet Plan Application</h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="text"
-              name="name"
-              value={userData.name}
-              onChange={handleChange}
-              placeholder="Name"
-              style={inputStyle}
-              required
-            />
-            <input
-              type="number"
-              name="age"
-              value={userData.age}
-              onChange={handleChange}
-              placeholder="Age"
-              style={inputStyle}
-              required
-            />
-            <input
-              type="number"
-              name="height"
-              value={userData.height}
-              onChange={handleChange}
-              placeholder="Height (cm)"
-              style={inputStyle}
-              required
-            />
-            <input
-              type="number"
-              name="weight"
-              value={userData.weight}
-              onChange={handleChange}
-              placeholder="Weight (kg)"
-              style={inputStyle}
-              required
-            />
-            <select
-              name="gender"
-              value={userData.gender}
-              onChange={handleChange}
-              style={inputStyle}
-              required
-            >
-              <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-            <select
-              name="goal"
-              value={userData.goal}
-              onChange={handleChange}
-              style={inputStyle}
-              required
-            >
-              <option value="">Select Goal</option>
-              <option value="Weight Loss">Weight Loss</option>
-              <option value="Muscle Gain">Muscle Gain</option>
-              <option value="Maintenance">Maintenance</option>
-            </select>
-            <div>
-              <h2 className="text-xl font-semibold mb-2">Current Diet Plan</h2>
-              <input
-                type="text"
-                name="breakfast"
-                value={userData.diet.breakfast.join(', ')}
-                onChange={(e) => handleDietChange('breakfast', e.target.value)}
-                placeholder="Breakfast (comma-separated)"
-                style={inputStyle}
-                className="mb-2"
-              />
-              <input
-                type="text"
-                name="lunch"
-                value={userData.diet.lunch.join(', ')}
-                onChange={(e) => handleDietChange('lunch', e.target.value)}
-                placeholder="Lunch (comma-separated)"
-                style={inputStyle}
-                className="mb-2"
-              />
-              <input
-                type="text"
-                name="dinner"
-                value={userData.diet.dinner.join(', ')}
-                onChange={(e) => handleDietChange('dinner', e.target.value)}
-                placeholder="Dinner (comma-separated)"
-                style={inputStyle}
-              />
+  const parseDietSuggestion = (text: string) => {
+    const formattedText = text
+      // Handle headers
+      .replace(/^(#{1,3})\s*(.*)$/gm, (match, hashes, content) => {
+        const level = hashes.length;
+        return `<h${level}>${content.trim()}</h${level}>`;
+      })
+      // Handle bold text
+      .replace(/\*\*(.*?)\*\*/g, (match, content) => `<strong>${content}</strong>`)
+      // Handle list items
+      .replace(/^\*\s*(.*)$/gm, (match, content) => `<li>${content.trim()}</li>`)
+      // Handle paragraphs
+      .replace(/^(?!<h[1-3]|<li|<ul|<ol)(.+)$/gm, (match, content) => `<p>${content.trim()}</p>`)
+      // Wrap adjacent list items in <ul> tags
+      .replace(/(<li>.*?<\/li>(\s*<li>.*?<\/li>)*)/g, match => `<ul>${match}</ul>`)
+      // Handle line breaks
+      .replace(/\n{2,}/g, '</p><p>');
+  
+    // Wrap the entire content in a div for easier styling
+    return `<div class="diet-suggestion">${formattedText}</div>`;
+  };
+  return (
+    <div className="container mx-auto p-4 max-w-3xl">
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center">Diet Plan Application</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={userData.name}
+                  onChange={handleChange}
+                  placeholder="Enter your name"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="age">Age</Label>
+                <Input
+                  id="age"
+                  name="age"
+                  type="number"
+                  value={userData.age}
+                  onChange={handleChange}
+                  placeholder="Enter your age"
+                  required
+                />
+              </div>
             </div>
-            <button type="submit" style={buttonStyle} disabled={isLoading}>
-              {isLoading ? 'Submitting...' : 'Submit'}
-            </button>
-          </form>
-        </div>
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <strong className="font-bold">Error!</strong>
-            <span className="block sm:inline"> {error}</span>
-          </div>
-        )}
-                   {dietSuggestion && (
-                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4">
-                    <h2 className="text-xl font-semibold mb-2">Diet Suggestion</h2>
-                    <p>{dietSuggestion}</p> {/* Render the suggestion directly */}
-                </div>
-            )}
 
-      </div>
-    );
-  }
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="height">Height (cm)</Label>
+                <Input
+                  id="height"
+                  name="height"
+                  type="number"
+                  value={userData.height}
+                  onChange={handleChange}
+                  placeholder="Height"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="weight">Weight (kg)</Label>
+                <Input
+                  id="weight"
+                  name="weight"
+                  type="number"
+                  value={userData.weight}
+                  onChange={handleChange}
+                  placeholder="Weight"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="gender">Gender</Label>
+                <Select name="gender" value={userData.gender} onValueChange={(value) => handleChange({ target: { name: 'gender', value } } as any)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="goal">Fitness Goal</Label>
+              <Select name="goal" value={userData.goal} onValueChange={(value) => handleChange({ target: { name: 'goal', value } } as any)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Goal" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Weight Loss">Weight Loss</SelectItem>
+                  <SelectItem value="Muscle Gain">Muscle Gain</SelectItem>
+                  <SelectItem value="Maintenance">Maintenance</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-4">
+              <Label className="text-lg font-semibold">Current Diet Plan</Label>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="breakfast">Breakfast</Label>
+                  <Input
+                    id="breakfast"
+                    name="breakfast"
+                    value={userData.diet.breakfast.join(", ")}
+                    onChange={(e) => handleDietChange("breakfast", e.target.value)}
+                    placeholder="Comma-separated"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lunch">Lunch</Label>
+                  <Input
+                    id="lunch"
+                    name="lunch"
+                    value={userData.diet.lunch.join(", ")}
+                    onChange={(e) => handleDietChange("lunch", e.target.value)}
+                    placeholder="Comma-separated"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dinner">Dinner</Label>
+                  <Input
+                    id="dinner"
+                    name="dinner"
+                    value={userData.diet.dinner.join(", ")}
+                    onChange={(e) => handleDietChange("dinner", e.target.value)}
+                    placeholder="Comma-separated"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <Button type="submit" disabled={isLoading} className="w-full">
+              {isLoading ? "Generating Diet Plan..." : "Generate Diet Plan"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </motion.div>
+    
+    <AnimatePresence>
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Alert variant="destructive" className="mb-6">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        </motion.div>
+      )}
+      
+      {dietSuggestion && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold">Your Personalized Diet Plan</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="diet-suggestion-content">
+                <TypedHTMLContent 
+                  html={parseDietSuggestion(dietSuggestion)} 
+                  speed={0.01}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
+  );
+}
