@@ -16,7 +16,7 @@ Nutrition Assessment and Personalized Plan
 Analyze the following information for ${user.name}  :
 
 Age: ${user.age}
-Height: ${user.height}cm
+Height: ${user.height}Ft
 Weight: ${user.weight}Kg
 Gender: ${user.gender}  
 Goal: ${user.goal}

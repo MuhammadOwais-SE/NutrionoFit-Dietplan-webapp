@@ -173,7 +173,7 @@ export default function Home() {
 
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="height">Height (cm)</Label>
+                <Label htmlFor="height">Height (Ft)</Label>
                 <Input
                   id="height"
                   name="height"
