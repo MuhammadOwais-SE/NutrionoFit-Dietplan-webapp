@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import TypedHTMLContent from "./TypedHTMLContent";
+import Image from "next/image";
+import NutrinoFitLogo from "../../public/assets/NutrinoFit-logo.svg";
 
 interface UserData {
   name: string;
@@ -114,15 +116,32 @@ export default function Home() {
     return `<div class="diet-suggestion">${formattedText}</div>`;
   };
   return (
-    <div className="container mx-auto p-4 max-w-3xl">
+    <div className="container mx-auto p-4 max-w-3xl ">
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card className="mb-6">
+      <Card className="mb-6 bg-green-100  ring-2 ring-offset-1 hover:ring-offset-4 shadow-[0_0_10px_rgba(0,128,0,200)] hover:shadow-[0_0_20px_rgba(0,128,0,200)] ring-green-300 duration-300 transition-all">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Diet Plan Application</CardTitle>
+          <CardTitle className="text-2xl font-bold w-full font-serif mx-auto text-center">
+            
+
+
+            <Image 
+            src={NutrinoFitLogo}
+            width={100}
+            height={100}
+            alt="NutrinoFit Logo"
+            className="w-32"
+            />
+            <span className="text-emerald-800">
+               Diet Plan
+               Application
+              </span>
+            
+            
+            </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -215,7 +234,7 @@ export default function Home() {
                     id="breakfast"
                     name="breakfast"
                     value={userData.diet.breakfast.join(", ")}
-                    onChange={(e) => handleDietChange("breakfast", e.target.value)}
+                    onChange={(e: any) => handleDietChange("breakfast", e.target.value)}
                     placeholder="Comma-separated"
                   />
                 </div>
@@ -225,7 +244,7 @@ export default function Home() {
                     id="lunch"
                     name="lunch"
                     value={userData.diet.lunch.join(", ")}
-                    onChange={(e) => handleDietChange("lunch", e.target.value)}
+                    onChange={(e: any) => handleDietChange("lunch", e.target.value)}
                     placeholder="Comma-separated"
                   />
                 </div>
@@ -235,14 +254,14 @@ export default function Home() {
                     id="dinner"
                     name="dinner"
                     value={userData.diet.dinner.join(", ")}
-                    onChange={(e) => handleDietChange("dinner", e.target.value)}
+                    onChange={(e: any) => handleDietChange("dinner", e.target.value)}
                     placeholder="Comma-separated"
                   />
                 </div>
               </div>
             </div>
 
-            <Button type="submit" disabled={isLoading} className="w-full">
+            <Button type="submit" disabled={isLoading} className="w-full bg-[#68AC31] hover:bg-[#5f9632]">
               {isLoading ? "Generating Diet Plan..." : "Generate Diet Plan"}
             </Button>
           </form>
@@ -258,7 +277,7 @@ export default function Home() {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.5 }}
         >
-          <Alert variant="destructive" className="mb-6">
+          <Alert variant="destructive" className="mb-">
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
@@ -271,12 +290,11 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.5 }}
+
         >
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold">Your Personalized Diet Plan</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <Card className="bg-green-100">
+            
+            <CardContent className="bg-lime-100- border-4 border-teal-500 rounded-md ">
               <div className="diet-suggestion-content">
                 <TypedHTMLContent 
                   html={parseDietSuggestion(dietSuggestion)} 
