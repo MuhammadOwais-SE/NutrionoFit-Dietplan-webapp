@@ -20,9 +20,7 @@ export async function fetchDataAnalysis(userInput: string) {
         }
     );
 
-    // Log the response status for debugging
-    console.log("Response Status:", response.status);
-    console.log("Response Status Text:", response.statusText);
+
 
     const data = await response.json();
     console.log("Parsed data from Gemini API:", data);
