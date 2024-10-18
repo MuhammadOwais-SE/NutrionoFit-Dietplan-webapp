@@ -1,6 +1,6 @@
 export async function fetchDataAnalysis(userInput: string) {
     const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyBWPFrTW4kRQK8Fel6fW5A_BOK4QTfo01w`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINIAI_API_KEY}`,
         {
             method: 'POST',
             headers: {
