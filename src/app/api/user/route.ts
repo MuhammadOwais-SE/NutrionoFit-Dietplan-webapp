@@ -25,7 +25,10 @@ export async function POST(req: Request) {
 
         Breakfast: ${user.diet.breakfast.join(', ')}
         Lunch: ${user.diet.lunch.join(', ')}
-        Dinner: ${user.diet.dinner.join(', ')}`;
+        Dinner: ${user.diet.dinner.join(', ')}
+        As an expert Nutritionist with over 20 years of experience, provide a comprehensive analysis and personalized plan. Your response will be directly used in a front-end application, so structure it clearly with appropriate formatting for easy reading.
+        `
+        ;
 
         // Call the Gemini API with the broken-down user diet plan
         const dietSuggestion = await fetchDataAnalysis(userDiet);
