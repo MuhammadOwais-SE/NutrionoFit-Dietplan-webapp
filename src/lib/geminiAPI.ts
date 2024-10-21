@@ -1,7 +1,16 @@
 export async function fetchDataAnalysis(userInput: string) {
-    const response = await fetch(
-        process.env.API_URL || '',
-        {
+    const sections = [
+        `1. Assessment of Current Habits:\n${userInput}`,
+        `2. Health Risks:\n${userInput}`,
+        `3. Personalized Meal Plan:\n${userInput}`,
+        `4. Recommendations for Improvement:\n${userInput}`,
+        `5. Additional Considerations:\n${userInput}`
+    ];
+
+    let fullResponse = "";
+
+    for (const section of sections) {
+        const response = await fetch(process.env.API_URL || '', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -11,29 +20,19 @@ export async function fetchDataAnalysis(userInput: string) {
                     {
                         parts: [
                             {
-                                text: userInput, // User diet information
+                                text: section, // Send smaller sections of the user diet
                             },
                         ],
                     },
                 ],
             }),
+        });
+
+        const data = await response.json();
+        if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+            fullResponse += data.candidates[0].content.parts[0].text + '\n';
         }
-    );
-
-    // Log the response status for debugging
-    console.log("Response Status:", response.status);
-    console.log("Response Status Text:", response.statusText);
-
-    const data = await response.json();
-    console.log("Parsed data from Gemini API:", data);
-    console.log("deep data from Gemini API:", data.candidates[0].content.parts[0].text);
-
- 
-    if (data?.candidates && data.candidates.length > 0) {
-        // Extract and return the text directly
-        const dietText = data.candidates[0].content.parts[0].text;
-        console.log("Extracted Text:", dietText);
-        return dietText; // Return the extracted text directly
     }
-    return null; // Return null if contents do not exist
+
+    return fullResponse;
 }
