@@ -1,38 +1,38 @@
 export async function fetchDataAnalysis(userInput: string) {
-    const sections = [
-        `1. Assessment of Current Habits:\n${userInput}`,
-        `2. Health Risks:\n${userInput}`,
-        `3. Personalized Meal Plan:\n${userInput}`,
-        `4. Recommendations for Improvement:\n${userInput}`,
-        `5. Additional Considerations:\n${userInput}`
-    ];
+    // Define all sections in a single prompt
+    const combinedPrompt = `
+        Nutrition Assessment and Personalized Plan Analysis
+        Please provide a comprehensive analysis in the following sections:
 
-    let fullResponse = "";
+        1. Assessment of Current Habits:
+        2. Health Risks:
+        3. Personalized Meal Plan:
+        4. Recommendations for Improvement:
+        5. Additional Considerations:
 
-    for (const section of sections) {
+        Based on the following information:
+        ${userInput}
+    `;
+
+    try {
         const response = await fetch(process.env.API_URL || '', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                contents: [
-                    {
-                        parts: [
-                            {
-                                text: section, // Send smaller sections of the user diet
-                            },
-                        ],
-                    },
-                ],
+                contents: [{
+                    parts: [{
+                        text: combinedPrompt,
+                    }],
+                }],
             }),
         });
 
         const data = await response.json();
-        if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-            fullResponse += data.candidates[0].content.parts[0].text + '\n';
-        }
+        return data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    } catch (error) {
+        console.error('Error fetching data analysis:', error);
+        throw error;
     }
-
-    return fullResponse;
 }

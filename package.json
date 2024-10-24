@@ -20,6 +20,7 @@
     "lucide-react": "^0.452.0",
     "mongoose": "^8.7.0",
     "next": "14.2.14",
+    "node-cache": "^5.1.2",
     "react": "^18",
     "react-dom": "^18",
     "react-simple-typewriter": "^5.0.1",
