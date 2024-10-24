@@ -1,5 +1,17 @@
+import { responseCache } from './cache';
+
 export async function fetchDataAnalysis(userInput: string) {
-    // Define all sections in a single prompt
+    // Create a unique key for this specific input
+    const cacheKey = Buffer.from(userInput).toString('base64');
+    
+    // Try to get cached response
+    const cachedResponse = responseCache.get(cacheKey);
+    if (cachedResponse) {
+        console.log('Returning cached response');
+        return cachedResponse as string;
+    }
+
+    // If not in cache, make the API call
     const combinedPrompt = `
         Nutrition Assessment and Personalized Plan Analysis
         Please provide a comprehensive analysis in the following sections:
@@ -30,7 +42,12 @@ export async function fetchDataAnalysis(userInput: string) {
         });
 
         const data = await response.json();
-        return data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        const result = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+        // Store the result in cache before returning
+        responseCache.set(cacheKey, result);
+        
+        return result;
     } catch (error) {
         console.error('Error fetching data analysis:', error);
         throw error;
