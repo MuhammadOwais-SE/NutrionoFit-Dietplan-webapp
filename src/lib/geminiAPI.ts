@@ -13,6 +13,7 @@ export async function fetchDataAnalysis(userInput: string) {
 
     // If not in cache, make the API call
     const combinedPrompt = `
+        As an expert Nutritionist with over 20 years of experience, provide a comprehensive analysis and personalized plan. Your response will be directly used in a front-end application, so structure it clearly with appropriate formatting for easy reading.
         Nutrition Assessment and Personalized Plan Analysis
         Please provide a comprehensive analysis in the following sections:
 
